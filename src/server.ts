@@ -2,6 +2,7 @@ import { Server } from "http";
 import config from "./app/config";
 import mongoose from "mongoose";
 import { app } from "./app";
+import { seedAdmin } from "./app/utils/seedAdmin";
 
 let server: Server;
 
@@ -20,8 +21,10 @@ const ServicesHubServer = async () => {
     process.exit(1); // Exit the process with failure
   }
 };
-
-ServicesHubServer();
+(async () => {
+  await ServicesHubServer();
+  await seedAdmin();
+})();
 
 process.on("unhandledRejection", (err) => {
   console.log("unHandle rejection detected... Server shutting down... ", err);
