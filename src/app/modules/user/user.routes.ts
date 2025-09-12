@@ -14,7 +14,13 @@ userRoute.post(
 );
 
 userRoute.get("/me", checkAuth(...Object.values(Role)), userControllers.getMe);
+
+userRoute.patch(
+  "/:id",
+  checkAuth(...Object.values(Role)),
+  userControllers.updateUserById
+);
+
 // "/"
-// "/:id"
 
 export default userRoute;
