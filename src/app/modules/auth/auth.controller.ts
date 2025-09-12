@@ -59,7 +59,50 @@ const createNewAccessToken = catchAsync(
   }
 );
 
+const logOutUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User Logged Out Successfully",
+      data: null,
+    });
+  }
+);
+
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user;
+    if (!decodedToken) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token");
+    }
+    const newPassword = req.body.newPassword;
+    const oldPassword = req.body.oldPassword;
+
+    await authService.changePassword(decodedToken, newPassword, oldPassword);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password change Successfully",
+      data: null,
+    });
+  }
+);
+
 export const authController = {
   createLogin,
   createNewAccessToken,
+  logOutUser,
+  changePassword,
 };

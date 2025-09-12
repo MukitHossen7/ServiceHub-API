@@ -11,4 +11,8 @@ userRoute.post(
   userControllers.createUser
 );
 
+// "/"
+// "/me"
+// "/:id"
+
 export default userRoute;
