@@ -15,6 +15,16 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const user = await userServices.getAllUsers();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User Retrieved Successfully",
+    data: user,
+  });
+});
+
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const decoded = req.user as JwtPayload;
   const user = await userServices.getMe(decoded?.id);
@@ -43,4 +53,5 @@ export const userControllers = {
   createUser,
   getMe,
   updateUserById,
+  getAllUsers,
 };
