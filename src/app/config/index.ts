@@ -17,4 +17,10 @@ export default {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
     JWT_REFRESH_EXPIRATION: process.env.JWT_REFRESH_EXPIRATION as string,
   },
+  REDIS: {
+    REDIS_HOST: process.env.REDIS_HOST as string,
+    REDIS_PORT: process.env.REDIS_PORT as string,
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
+    REDIS_USERNAME: process.env.REDIS_USERNAME as string,
+  },
 };
