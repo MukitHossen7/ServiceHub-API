@@ -6,12 +6,19 @@ export enum IStatus {
   REJECTED = "REJECTED",
 }
 
+export interface IBusinessAddress {
+  street: string;
+  city: string;
+  state?: string;
+  country: string;
+}
+
 // Business Interface
 export interface IBusiness {
   _id?: string;
   user: Types.ObjectId;
   businessName: string;
-  businessAddress: string;
+  businessAddress: IBusinessAddress;
   zipCode: string;
   businessPhone: string;
   website?: string;
