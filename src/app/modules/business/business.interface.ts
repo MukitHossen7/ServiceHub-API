@@ -29,4 +29,7 @@ export interface IBusiness {
   description: string;
   status?: IStatus;
   images?: string[];
+  isDeleted?: boolean;
+  isActive?: boolean;
+  location?: { type: "Point"; coordinates: [number, number] };
 }
