@@ -28,7 +28,7 @@ export interface IBusiness {
   numberOfLocations?: number;
   description: string;
   status?: IStatus;
-  images?: string[];
+  images?: string[]; //from ar madhama input nita hoba
   isDeleted?: boolean;
   isActive?: boolean;
   location?: { type: "Point"; coordinates: [number, number] };
