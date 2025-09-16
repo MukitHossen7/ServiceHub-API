@@ -26,7 +26,7 @@ export interface IAddress {
 }
 
 export interface IUser {
-  _id?: Types.ObjectId;
+  _id?: string;
   name: string;
   email: string;
   password?: string;

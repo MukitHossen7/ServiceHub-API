@@ -3,7 +3,7 @@ import { IService, ServiceStatus } from "./service.interface";
 
 const ServiceSchema = new Schema<IService>(
   {
-    businessId: {
+    business: {
       type: Schema.Types.ObjectId,
       ref: "Business",
       required: true,

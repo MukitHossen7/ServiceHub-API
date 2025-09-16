@@ -7,7 +7,7 @@ export enum ServiceStatus {
 
 export interface IService {
   _id?: string;
-  businessId: Types.ObjectId;
+  business: Types.ObjectId;
   name: string;
   slug?: string;
   description: string;
