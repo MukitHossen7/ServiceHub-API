@@ -12,6 +12,8 @@ import {
 import { Subscription } from "./subscription.model";
 import AppError from "./../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
+import { User } from "../user/user.model";
+import { Role } from "../user/user.interface";
 
 const createSubscription = async (
   userId: string,
@@ -127,12 +129,39 @@ const getSubscriptionById = async (subscriptionId: string) => {
   return subscription;
 };
 
-const updateSubscriptionStatus = async () => {
-  return {};
+const approveSubscription = async (subscriptionId: string) => {
+  const session = await Subscription.startSession();
+  session.startTransaction();
+  try {
+    const subscription = await Subscription.findById(subscriptionId);
+    if (!subscription) {
+      throw new AppError(httpStatus.NOT_FOUND, "Subscription not found");
+    }
+    const updateSubscription = await Subscription.findByIdAndUpdate(
+      subscriptionId,
+      { isApprovedByAdmin: true },
+      { new: true, runValidator: true, session }
+    );
+
+    await User.findByIdAndUpdate(
+      subscription.user,
+      { role: Role.VENDOR },
+      { new: true, runValidators: true, session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return updateSubscription;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
+
 export const subscriptionServices = {
   createSubscription,
   getAllSubscription,
   getSubscriptionById,
-  updateSubscriptionStatus,
+  approveSubscription,
 };

@@ -3,10 +3,7 @@ import { subscriptionController } from "./subscription.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import { zodValidateRequest } from "../../middlewares/zodValidateRequest";
-import {
-  createSubscriptionZodSchema,
-  updateSubscriptionZodSchema,
-} from "./subscription.zod.validation";
+import { createSubscriptionZodSchema } from "./subscription.zod.validation";
 
 const subscriptionRoute = express.Router();
 
@@ -34,10 +31,9 @@ subscriptionRoute.get(
 
 // update subscription status
 subscriptionRoute.patch(
-  "/:subscriptionId/status",
-  checkAuth(...Object.values(Role)),
-  zodValidateRequest(updateSubscriptionZodSchema),
-  subscriptionController.updateSubscriptionStatus
+  "/approve/:subscriptionId",
+  checkAuth(Role.ADMIN),
+  subscriptionController.approveSubscription
 );
 
 export default subscriptionRoute;

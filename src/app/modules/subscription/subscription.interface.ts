@@ -19,6 +19,7 @@ export interface ISubscription {
   payment?: Types.ObjectId;
   plan: SubscriptionPlan;
   status: Subscription_Status;
+  isApprovedByAdmin: boolean;
   startedAt?: Date;
   expiresAt?: Date;
 }
