@@ -45,21 +45,22 @@ const getSubscriptionById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateSubscriptionStatus = catchAsync(
-  async (req: Request, res: Response) => {
-    const updated = await subscriptionServices.updateSubscriptionStatus();
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Subscription Status Updated Successfully",
-      data: updated,
-    });
-  }
-);
+const approveSubscription = catchAsync(async (req: Request, res: Response) => {
+  const { subscriptionId } = req.params;
+  const updated = await subscriptionServices.approveSubscription(
+    subscriptionId
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Subscription approved successfully",
+    data: updated,
+  });
+});
 
 export const subscriptionController = {
   createSubscription,
   getAllSubscription,
   getSubscriptionById,
-  updateSubscriptionStatus,
+  approveSubscription,
 };

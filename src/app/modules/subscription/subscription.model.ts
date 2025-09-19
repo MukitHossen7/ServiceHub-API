@@ -36,6 +36,10 @@ const subscriptionSchema = new Schema<ISubscription>(
     expiresAt: {
       type: Date,
     },
+    isApprovedByAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true, versionKey: false }
 );
