@@ -14,6 +14,7 @@ import AppError from "./../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { User } from "../user/user.model";
 import { Role } from "../user/user.interface";
+import { IStatus } from "../business/business.interface";
 
 const createSubscription = async (
   userId: string,
@@ -146,12 +147,21 @@ const approveSubscription = async (subscriptionId: string) => {
     const updateSubscription = await Subscription.findByIdAndUpdate(
       subscriptionId,
       { isApprovedByAdmin: true },
-      { new: true, runValidator: true, session }
+      { new: true, runValidators: true, session }
     );
 
     await User.findByIdAndUpdate(
       subscription.user,
       { role: Role.VENDOR },
+      { new: true, runValidators: true, session }
+    );
+
+    await Business.findByIdAndUpdate(
+      subscription.business,
+      {
+        status: IStatus.APPROVED,
+        isActive: true,
+      },
       { new: true, runValidators: true, session }
     );
 
@@ -203,6 +213,15 @@ const cancelSubscription = async (subscriptionId: string) => {
       subscription.user,
       {
         role: Role.USER,
+      },
+      { new: true, runValidators: true, session }
+    );
+
+    await Business.findByIdAndUpdate(
+      subscription.business,
+      {
+        status: IStatus.REJECTED,
+        isActive: false,
       },
       { new: true, runValidators: true, session }
     );
