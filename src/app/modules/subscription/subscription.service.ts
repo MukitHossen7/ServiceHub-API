@@ -137,6 +137,12 @@ const approveSubscription = async (subscriptionId: string) => {
     if (!subscription) {
       throw new AppError(httpStatus.NOT_FOUND, "Subscription not found");
     }
+    if (subscription.status === Subscription_Status.CANCEL) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "This subscription has been cancelled and cannot be approved"
+      );
+    }
     const updateSubscription = await Subscription.findByIdAndUpdate(
       subscriptionId,
       { isApprovedByAdmin: true },
@@ -159,9 +165,61 @@ const approveSubscription = async (subscriptionId: string) => {
   }
 };
 
+const cancelSubscription = async (subscriptionId: string) => {
+  const session = await Subscription.startSession();
+  session.startTransaction();
+  try {
+    const subscription = await Subscription.findById(subscriptionId);
+    if (!subscription) {
+      throw new AppError(httpStatus.NOT_FOUND, "Subscription not found");
+    }
+
+    const payment = await Payment.findById(subscription.payment);
+    if (!payment) {
+      throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+    }
+
+    // Subscription cancel
+    // Future scope: await SslService.sslRefundInit(payment.transactionId, payment.price);
+
+    const updateSubscription = await Subscription.findByIdAndUpdate(
+      subscriptionId,
+      {
+        status: Subscription_Status.CANCEL,
+        isApprovedByAdmin: false,
+      },
+      { new: true, runValidators: true, session }
+    );
+    await Payment.findByIdAndUpdate(
+      payment._id,
+      {
+        status: PAYMENT_STATUS.REFUNDED,
+        refundRequested: true,
+      },
+      { new: true, runValidators: true, session }
+    );
+
+    await User.findByIdAndUpdate(
+      subscription.user,
+      {
+        role: Role.USER,
+      },
+      { new: true, runValidators: true, session }
+    );
+    await session.commitTransaction();
+    session.endSession();
+    return updateSubscription;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 export const subscriptionServices = {
   createSubscription,
   getAllSubscription,
   getSubscriptionById,
   approveSubscription,
+  cancelSubscription,
 };
