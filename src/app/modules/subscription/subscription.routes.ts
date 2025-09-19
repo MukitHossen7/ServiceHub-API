@@ -36,4 +36,10 @@ subscriptionRoute.patch(
   subscriptionController.approveSubscription
 );
 
+subscriptionRoute.patch(
+  "/cancel/:subscriptionId",
+  checkAuth(Role.ADMIN),
+  subscriptionController.cancelSubscription
+);
+
 export default subscriptionRoute;

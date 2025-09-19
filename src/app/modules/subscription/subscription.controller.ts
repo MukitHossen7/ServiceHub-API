@@ -58,9 +58,21 @@ const approveSubscription = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const cancelSubscription = catchAsync(async (req: Request, res: Response) => {
+  const { subscriptionId } = req.params;
+  const updated = await subscriptionServices.cancelSubscription(subscriptionId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Subscription cancelled and payment refunded successfully",
+    data: updated,
+  });
+});
+
 export const subscriptionController = {
   createSubscription,
   getAllSubscription,
   getSubscriptionById,
   approveSubscription,
+  cancelSubscription,
 };
