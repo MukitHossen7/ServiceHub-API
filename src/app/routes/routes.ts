@@ -17,6 +17,6 @@ routes.use("/businesses", businessRoute);
 routes.use("/services", serviceRoute);
 routes.use("/reviews", reviewRoute);
 routes.use("/subscription", subscriptionRoute);
-routes.use("/payment ", paymentRoute);
+routes.use("/payment", paymentRoute);
 
 export default routes;
