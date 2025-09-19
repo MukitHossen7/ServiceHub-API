@@ -15,7 +15,7 @@ export enum Subscription_Status {
 export interface ISubscription {
   _id?: string;
   user: Types.ObjectId;
-  business: Types.ObjectId;
+  business?: Types.ObjectId;
   payment?: Types.ObjectId;
   plan: SubscriptionPlan;
   status: Subscription_Status;

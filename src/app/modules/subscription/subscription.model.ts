@@ -15,7 +15,6 @@ const subscriptionSchema = new Schema<ISubscription>(
     business: {
       type: Schema.Types.ObjectId,
       ref: "Business",
-      required: true,
     },
     payment: {
       type: Schema.Types.ObjectId,

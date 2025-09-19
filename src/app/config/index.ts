@@ -35,4 +35,16 @@ export default {
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
     GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
   },
+  SSLCOMMERZ: {
+    SSL_STORE_ID: process.env.SSL_STORE_ID as string,
+    SSL_STORE_PASS: process.env.SSL_STORE_PASS as string,
+    SSL_PAYMENT_API: process.env.SSL_PAYMENT_API as string,
+    SSL_VALIDATION_API: process.env.SSL_VALIDATION_API as string,
+    SLL_SUCCESS_BACKEND_URL: process.env.SLL_SUCCESS_BACKEND_URL as string,
+    SLL_FAIL_BACKEND_URL: process.env.SLL_FAIL_BACKEND_URL as string,
+    SLL_CANCEL_BACKEND_URL: process.env.SLL_CANCEL_BACKEND_URL as string,
+    SLL_SUCCESS_FRONTEND_URL: process.env.SLL_SUCCESS_FRONTEND_URL as string,
+    SLL_FAIL_FRONTEND_URL: process.env.SLL_FAIL_FRONTEND_URL as string,
+    SLL_CANCEL_FRONTEND_URL: process.env.SLL_CANCEL_FRONTEND_URL as string,
+  },
 };

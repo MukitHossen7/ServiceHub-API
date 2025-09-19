@@ -9,6 +9,7 @@ export enum PAYMENT_STATUS {
 }
 
 export interface IPayment {
+  _id?: string;
   subscription: Types.ObjectId;
   transactionId: string;
   price: number;
