@@ -33,7 +33,10 @@ const getAllSubscription = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getSubscriptionById = catchAsync(async (req: Request, res: Response) => {
-  const subscription = await subscriptionServices.getSubscriptionById();
+  const { subscriptionId } = req.params;
+  const subscription = await subscriptionServices.getSubscriptionById(
+    subscriptionId as string
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -28,7 +28,7 @@ subscriptionRoute.get(
 // Get Subscription By ID (Vendor)
 subscriptionRoute.get(
   "/:subscriptionId",
-  checkAuth(Role.VENDOR),
+  checkAuth(Role.VENDOR, Role.ADMIN),
   subscriptionController.getSubscriptionById
 );
 

@@ -1,4 +1,3 @@
-import AppError from "../../errorHelpers/AppError";
 import { getTransactionId } from "../../utils/getTransactionId";
 import { Business } from "../business/business.model";
 import { PAYMENT_STATUS } from "../payment/payment.interface";
@@ -11,6 +10,8 @@ import {
   SubscriptionPlan,
 } from "./subscription.interface";
 import { Subscription } from "./subscription.model";
+import AppError from "./../../errorHelpers/AppError";
+import httpStatus from "http-status-codes";
 
 const createSubscription = async (
   userId: string,
@@ -112,11 +113,18 @@ const createSubscription = async (
 };
 
 const getAllSubscription = async () => {
-  return {};
+  const allSubscription = await Subscription.find({}).sort({
+    createdAt: "desc",
+  });
+  return allSubscription;
 };
 
-const getSubscriptionById = async () => {
-  return {};
+const getSubscriptionById = async (subscriptionId: string) => {
+  const subscription = await Subscription.findById(subscriptionId);
+  if (!subscription) {
+    throw new AppError(httpStatus.NOT_FOUND, "Subscription is Not Found");
+  }
+  return subscription;
 };
 
 const updateSubscriptionStatus = async () => {
