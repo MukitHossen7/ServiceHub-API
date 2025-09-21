@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IService, ServiceStatus } from "./service.interface";
+import slugify from "slugify";
 
 const ServiceSchema = new Schema<IService>(
   {
@@ -9,6 +10,12 @@ const ServiceSchema = new Schema<IService>(
       required: true,
     },
     name: { type: String, required: true, index: true },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+    },
     slug: {
       type: String,
     },
@@ -45,5 +52,21 @@ const ServiceSchema = new Schema<IService>(
   },
   { timestamps: true, versionKey: false }
 );
+
+ServiceSchema.pre("save", async function (next) {
+  if (this.isModified("name") || this.isModified("category")) {
+    let slug = slugify(this.name, { lower: true, strict: true });
+    const originalSlug = slug;
+
+    let counter = 1;
+    // Check uniqueness **within the same category**
+    while (await Service.exists({ slug, category: this.category })) {
+      slug = `${originalSlug}-${counter++}`;
+    }
+
+    this.slug = slug;
+  }
+  next();
+});
 
 export const Service = model<IService>("Service", ServiceSchema);

@@ -9,6 +9,7 @@ export interface IService {
   _id?: string;
   business: Types.ObjectId;
   name: string;
+  category: string;
   slug?: string;
   description: string;
   images?: string[];

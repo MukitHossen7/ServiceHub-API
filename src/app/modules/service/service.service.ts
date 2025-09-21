@@ -1,12 +1,68 @@
 import { JwtPayload } from "jsonwebtoken";
 import { IService } from "./service.interface";
+import { Business } from "../business/business.model";
+import AppError from "../../errorHelpers/AppError";
+import httpStatus from "http-status-codes";
+import { Service } from "./service.model";
+import { IStatus } from "../business/business.interface";
 
 const createService = async (payload: Partial<IService>, user: JwtPayload) => {
-  return {};
+  const business = await Business.findOne({ user: user.id });
+
+  if (!business) {
+    throw new AppError(httpStatus.NOT_FOUND, "Business Not Found");
+  }
+
+  // Check business is not deleted
+  if (business.isDeleted) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This business is deleted, you cannot add a service"
+    );
+  }
+
+  // Check business is active
+  if (!business.isActive) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This business is not active, you cannot add a service"
+    );
+  }
+
+  // Check business status
+  if (business.status !== IStatus.APPROVED) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This business is not approved yet, you cannot add a service"
+    );
+  }
+
+  const service = await Service.create({
+    ...payload,
+    business: business._id,
+  });
+  return service;
 };
 
 const getAllServices = async () => {
-  return {};
+  const services = await Service.find({
+    status: "AVAILABLE",
+  }).populate({
+    path: "business",
+    match: {
+      status: "APPROVED",
+      isActive: true,
+      isDeleted: false,
+    },
+    select: "businessName businessAddress",
+  });
+  const grouped: Record<string, any[]> = {};
+  services.forEach((service) => {
+    const category = service.category || "Others";
+    if (!grouped[category]) grouped[category] = [];
+    grouped[category].push(service);
+  });
+  return grouped;
 };
 
 const getCommonServices = async () => {
