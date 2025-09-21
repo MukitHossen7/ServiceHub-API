@@ -48,8 +48,54 @@ const getAllReviews = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyReviews = catchAsync(async (req: Request, res: Response) => {
+  const { id: userId } = req.user as JwtPayload;
+  const reviews = await reviewServices.getMyReviews(userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "My Reviews retrieved successfully",
+    data: reviews,
+  });
+});
+
+const updateReview = catchAsync(async (req: Request, res: Response) => {
+  const { id: userId } = req.user as JwtPayload;
+  const { reviewId } = req.params;
+  const payload = req.body;
+
+  const updatedReview = await reviewServices.updateReview(
+    reviewId,
+    userId,
+    payload
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Review updated successfully",
+    data: updatedReview,
+  });
+});
+
+const deleteReview = catchAsync(async (req: Request, res: Response) => {
+  const { id: userId, role } = req.user as JwtPayload;
+  const { reviewId } = req.params;
+
+  const result = await reviewServices.deleteReview(reviewId, userId, role);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Review deleted successfully",
+    data: result,
+  });
+});
+
 export const reviewController = {
   createReview,
   getReviewsByBusiness,
   getAllReviews,
+  getMyReviews,
+  updateReview,
+  deleteReview,
 };

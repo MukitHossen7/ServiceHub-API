@@ -3,6 +3,7 @@ import { Business } from "../business/business.model";
 import httpStatus from "http-status-codes";
 import { Review } from "./review.model";
 import { IReview } from "./review.interface";
+import { Role } from "../user/user.interface";
 
 const createReview = async (
   businessId: string,
@@ -92,8 +93,65 @@ const getAllReviews = async () => {
   return reviews;
 };
 
+const getMyReviews = async (userId: string) => {
+  console.log(userId);
+  const reviews = await Review.find({ user: userId }).populate(
+    "business",
+    "businessName businessAddress businessPhone status isActive"
+  );
+
+  return reviews;
+};
+
+const updateReview = async (
+  reviewId: string,
+  userId: string,
+  payload: Partial<IReview>
+) => {
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+  }
+
+  // owner check
+  if (review.user.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only update your own review"
+    );
+  }
+  const updateReview = await Review.findByIdAndUpdate(reviewId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return updateReview;
+};
+
+const deleteReview = async (reviewId: string, userId: string, role: string) => {
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+  }
+
+  // check: user owns review OR admin
+  if (role !== Role.ADMIN && review.user.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only delete your own review"
+    );
+  }
+
+  await Review.findByIdAndDelete(reviewId);
+
+  return { message: "Review deleted successfully" };
+};
+
 export const reviewServices = {
   createReview,
   getReviewsByBusiness,
   getAllReviews,
+  getMyReviews,
+  updateReview,
+  deleteReview,
 };
