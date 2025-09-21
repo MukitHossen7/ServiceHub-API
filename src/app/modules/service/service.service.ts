@@ -45,7 +45,24 @@ const createService = async (payload: Partial<IService>, user: JwtPayload) => {
 };
 
 const getAllServices = async () => {
-  return {};
+  const services = await Service.find({
+    status: "AVAILABLE",
+  }).populate({
+    path: "business",
+    match: {
+      status: "APPROVED",
+      isActive: true,
+      isDeleted: false,
+    },
+    select: "businessName businessAddress",
+  });
+  const grouped: Record<string, any[]> = {};
+  services.forEach((service) => {
+    const category = service.category || "Others";
+    if (!grouped[category]) grouped[category] = [];
+    grouped[category].push(service);
+  });
+  return grouped;
 };
 
 const getCommonServices = async () => {
