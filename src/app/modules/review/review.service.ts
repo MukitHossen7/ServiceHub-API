@@ -36,6 +36,18 @@ const createReview = async (
     );
   }
 
+  const existingReview = await Review.findOne({
+    user: userId,
+    business: businessId,
+  });
+
+  if (existingReview) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You have already reviewed this business"
+    );
+  }
+
   const review = await Review.create({
     user: userId,
     business: businessId,

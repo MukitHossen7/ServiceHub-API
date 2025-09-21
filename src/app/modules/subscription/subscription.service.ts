@@ -150,11 +150,14 @@ const approveSubscription = async (subscriptionId: string) => {
       { new: true, runValidators: true, session }
     );
 
-    await User.findByIdAndUpdate(
-      subscription.user,
-      { role: Role.VENDOR },
-      { new: true, runValidators: true, session }
-    );
+    const user = await User.findById(subscription.user);
+    if (user && user.role !== Role.VENDOR) {
+      await User.findByIdAndUpdate(
+        subscription.user,
+        { role: Role.VENDOR },
+        { new: true, runValidators: true, session }
+      );
+    }
 
     await Business.findByIdAndUpdate(
       subscription.business,
@@ -209,13 +212,14 @@ const cancelSubscription = async (subscriptionId: string) => {
       { new: true, runValidators: true, session }
     );
 
-    await User.findByIdAndUpdate(
-      subscription.user,
-      {
-        role: Role.USER,
-      },
-      { new: true, runValidators: true, session }
-    );
+    const user = await User.findById(subscription.user);
+    if (user && user.role === Role.VENDOR) {
+      await User.findByIdAndUpdate(
+        subscription.user,
+        { role: Role.USER },
+        { new: true, runValidators: true, session }
+      );
+    }
 
     await Business.findByIdAndUpdate(
       subscription.business,
