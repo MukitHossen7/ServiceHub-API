@@ -26,6 +26,19 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const searchServices = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query;
+  const result = await servicesService.searchServices(
+    query as Record<string, string>
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Search services retrieved successfully",
+    data: result,
+  });
+});
+
 const getCommonServices = catchAsync(async (req: Request, res: Response) => {
   const result = await servicesService.getCommonServices();
 
@@ -77,6 +90,7 @@ const deleteService = catchAsync(async (req: Request, res: Response) => {
 export const serviceController = {
   createService,
   getAllServices,
+  searchServices,
   getCommonServices,
   getSingleService,
   updateService,

@@ -24,6 +24,9 @@ serviceRoute.get("/", serviceController.getAllServices);
 // GET - common service types (public)
 serviceRoute.get("/common", serviceController.getCommonServices);
 
+// Advanced search
+serviceRoute.get("/search", serviceController.searchServices);
+
 // GET - single service (public)
 serviceRoute.get("/:id", serviceController.getSingleService);
 
