@@ -4,7 +4,7 @@ import { Business } from "../business/business.model";
 import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes";
 import { Service } from "./service.model";
-import { IStatus } from "../business/business.interface";
+import { IBusiness, IStatus } from "../business/business.interface";
 
 const createService = async (payload: Partial<IService>, user: JwtPayload) => {
   const business = await Business.findOne({ user: user.id });
@@ -65,6 +65,37 @@ const getAllServices = async () => {
   return grouped;
 };
 
+const searchServices = async (query: Record<string, string>) => {
+  const { name, zipCode } = query;
+  const serviceFilter: any = { status: "AVAILABLE" };
+  if (name) {
+    serviceFilter.name = {
+      $regex: name as string,
+      $options: "i",
+    };
+  }
+
+  const services = await Service.find(serviceFilter).populate({
+    path: "business",
+    match: {
+      status: "APPROVED",
+      isDeleted: false,
+      isActive: true,
+    },
+    select: "businessName businessAddress zipCode",
+  });
+
+  let filtered = services;
+  if (zipCode) {
+    filtered = services.filter((s) => {
+      const business = s.business as unknown as IBusiness;
+      return business && business.zipCode === zipCode;
+    });
+  }
+
+  return filtered;
+};
+
 const getCommonServices = async () => {
   return {};
 };
@@ -88,6 +119,7 @@ const deleteService = async (id: string, user: JwtPayload) => {
 export const servicesService = {
   createService,
   getAllServices,
+  searchServices,
   getCommonServices,
   getSingleService,
   updateService,
